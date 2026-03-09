@@ -9,7 +9,7 @@ const PDFRouter = require("./routes/PDF.route")
 const app = express()
 
 app.use(cors({
-    origin: true,
+    origin: "https://notexa-ai-project-client.onrender.com",
     credentials: true
 }))
 app.use(express.json());
