@@ -1,0 +1,88 @@
+const notesModel = require("../models/notes.model");
+const UserModel = require("../models/user.model");
+const generateGeminiResponse = require("../services/gemini.services");
+const buildPrompt = require("../utils/promptBuilder");
+
+const noteGenerateController = async (req, res) => {
+    try {
+        const {
+            topic,
+            classLevel,
+            examType,
+            revisionMode,
+            includeDiagram,
+            includeChart,
+        } = req.body;
+
+        if (!topic) {
+            return res.status(400).json({
+                message: "Topic is required",
+            });
+        }
+
+        const user = await UserModel.findById(req.userId);
+
+        if (!user) {
+            return res.status(404).json({
+                message: "User not found",
+            });
+        }
+
+        if (user.credits < 10) {
+            return res.status(400).json({
+                message: "Not enough credits",
+            });
+        }
+
+        const prompt = buildPrompt({
+            topic,
+            classLevel,
+            examType,
+            revisionMode,
+            includeDiagram,
+            includeChart,
+        });
+
+        const aiRawResponse = await generateGeminiResponse(prompt);
+        console.log("AI Raw Response:", aiRawResponse);
+        let aiResponse;
+
+        try {
+            aiResponse = JSON.parse(aiRawResponse);
+        } catch (err) {
+            return res.status(500).json({
+                message: "AI returned invalid JSON",
+            });
+        }
+
+        const notes = await notesModel.create({
+            user: user._id,
+            topic,
+            classLevel,
+            examType,
+            revisionMode,
+            includeDiagram,
+            includeChart,
+            content: aiResponse,
+        });
+
+        user.credits -= 10;
+        user.notes.push(notes._id);
+
+        await user.save();
+
+        return res.status(200).json({
+            success: true,
+            message: "Notes generated successfully",
+            notes,
+        });
+    } catch (error) {
+        console.log("Error inside noteGenerateController:", error.message);
+        console.log(error);
+        return res.status(500).json({
+            message: "note contollr Internal server error",
+        });
+    }
+};
+
+module.exports = noteGenerateController;
