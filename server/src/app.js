@@ -9,28 +9,20 @@ const PDFRouter = require("./routes/PDF.route");
 
 const app = express();
 
-// Important for Render secure cookies
 app.set("trust proxy", 1);
 
-// CORS configuration
 app.use(
   cors({
     origin: ["https://notexa-ai-project-client.onrender.com"],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
-    optionsSuccessStatus: 200,
   })
 );
 
-// Handle preflight requests
-app.options("*", cors());
-
-// Middleware
 app.use(express.json());
 app.use(cookieParser());
 
-// Routes
 app.use("/api/auth", authRouter);
 app.use("/api/user", userRouter);
 app.use("/api/notes", noteRouter);
