@@ -24,7 +24,7 @@ const googleAuth = async (req, res) => {
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: true,          // change here
       sameSite: "none",
       path: "/",
       maxAge: 7 * 24 * 60 * 60 * 1000,
@@ -34,6 +34,7 @@ const googleAuth = async (req, res) => {
       message: "Login successful",
       user,
     });
+
   } catch (error) {
     console.error("Error in googleAuth controller:", error);
     return res.status(500).json({
@@ -46,7 +47,7 @@ const logout = (req, res) => {
   try {
     res.clearCookie("token", {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: true,          // change here
       sameSite: "none",
       path: "/",
     });
@@ -54,6 +55,7 @@ const logout = (req, res) => {
     res.status(200).json({
       message: "Logout successful",
     });
+
   } catch (error) {
     console.error("Error in logout controller:", error);
     res.status(500).json({
