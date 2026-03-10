@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Pricing from "./pages/Pricing";
 import History from "./pages/History";
 import Notes from "./pages/Notes";
-export const serverUrl = "http://localhost:8000";
+export const serverUrl = "https://notexa-ai-project-server.onrender.com";
 const App = () => {
   const dispatch = useDispatch();
 
