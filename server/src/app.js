@@ -15,11 +15,16 @@ app.set("trust proxy", 1);
 // CORS configuration
 app.use(
   cors({
-    origin: "https://notexa-ai-project-client.onrender.com",
+    origin: ["https://notexa-ai-project-client.onrender.com"],
     credentials: true,
-    optionsSuccessStatus: 200
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    optionsSuccessStatus: 200,
   })
 );
+
+// Handle preflight requests
+app.options("*", cors());
 
 // Middleware
 app.use(express.json());
