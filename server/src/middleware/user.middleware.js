@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const isAuthenticated = (req, res, next) => {
     try {
-        const { token } = req.cookies;
+        const token = req.cookies?.token;
         if (!token) {
             return res.status(401).json({
                 message: "tooken is not provided"
@@ -13,7 +13,7 @@ const isAuthenticated = (req, res, next) => {
                 message: "Invalid token"
             })
         }
-        req.userId = verifyToken.userId || verifyToken.userid || verifyToken.id; 
+        req.userId = verifyToken.userId || verifyToken.userid || verifyToken.id;
         next();
     } catch (error) {
         console.log("this error come from isAuthenticated middleware:", error);
